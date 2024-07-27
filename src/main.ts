@@ -10,7 +10,7 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-bootstrap().then((value) =>
+bootstrap().then(() =>
   console.log(
     `NestJS server is running on http://localhost:${process.env.APP_PORT || 3000}`,
   ),
