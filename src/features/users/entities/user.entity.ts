@@ -2,9 +2,11 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TimestampEntity } from '../../../shared/entities/timestamp.entity';
@@ -44,6 +46,10 @@ export class User extends TimestampEntity {
 
   @Column({ nullable: true })
   rememberToken?: string;
+
+  @OneToOne(() => Company)
+  @JoinColumn()
+  connectedCompany?: Company;
 
   @OneToMany(() => Company, (company) => company.owner)
   @JoinTable()

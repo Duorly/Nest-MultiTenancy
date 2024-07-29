@@ -11,6 +11,8 @@ import { SigninDto } from '../dto/signin.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import { User } from '../../../users/entities/user.entity';
+import { ConnectedCompany } from '../../../../common/decorators/connected-company.decorator';
+import { Company } from '../../companies/entities/company.entity';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -36,7 +38,10 @@ export class AuthenticationController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('user')
-  getProfile(@Auth() user: User) {
-    return user;
+  getProfile(@Auth() user: User, @ConnectedCompany() company: Company) {
+    return {
+      user,
+      company,
+    };
   }
 }
