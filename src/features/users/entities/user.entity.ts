@@ -1,6 +1,16 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { TimestampEntity } from '../../../shared/entities/timestamp.entity';
 import { IsEmail } from 'class-validator';
+import { Exclude } from 'class-transformer';
+import { Company } from '../../core/companies/entities/company.entity';
 
 @Entity('users')
 export class User extends TimestampEntity {
@@ -28,9 +38,18 @@ export class User extends TimestampEntity {
   @Column({ nullable: true })
   emailVerifiedAt?: Date;
 
+  @Exclude()
   @Column({ nullable: true })
   password?: string;
 
   @Column({ nullable: true })
   rememberToken?: string;
+
+  @OneToMany(() => Company, (company) => company.owner)
+  @JoinTable()
+  companies: Company[];
+
+  @ManyToMany(() => Company, (company) => company.users)
+  @JoinTable()
+  userCompanies: Company[];
 }

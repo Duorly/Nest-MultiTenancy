@@ -27,6 +27,6 @@ async function bootstrap() {
 
 bootstrap().then(() =>
   console.log(
-    `NestJS server is running on http://localhost:${process.env.APP_PORT || 3000}`,
+    `NestJS server is running on http://localhost:${process.env.APP_PORT || 3000}\nSwagger is running on http://localhost:${process.env.APP_PORT || 3000}/docs`,
   ),
 );
