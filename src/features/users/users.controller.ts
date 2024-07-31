@@ -11,9 +11,12 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../core/authentication/guards/jwt-auth.guard';
+import { CompanyDataSource } from '../../common/decorators/connected-company.decorator';
+import { DataSource } from 'typeorm';
 
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @ApiTags('Users')
 @Controller('users')
@@ -23,6 +26,13 @@ export class UsersController {
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Get('profile')
+  async getProfile(@CompanyDataSource() datasource: DataSource) {
+    console.log('Get Profile controller');
+
+    return await this.usersService.UserCompany(datasource);
   }
 
   @Get()

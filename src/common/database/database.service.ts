@@ -1,15 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { User } from '../../features/users/entities/user.entity';
+import { Company } from '../../features/core/companies/entities/company.entity';
 
 @Injectable()
 export class DatabaseService {
-  constructor(private configService: ConfigService) {
-  }
+  constructor(private configService: ConfigService) {}
 
   private readonly logger = new Logger(DatabaseService.name);
 
-  async connectionDB(dbName: string): Promise<DataSource> {
+  private dataSources: Map<string, DataSource> = new Map();
+
+  private createDataSource(dbName: string, entities: any[] = []): DataSource {
     return new DataSource({
       type: 'mysql',
       host: this.configService.get('MYSQL_HOST'),
@@ -17,11 +20,12 @@ export class DatabaseService {
       username: this.configService.get('MYSQL_USER'),
       password: this.configService.get('MYSQL_PASSWORD'),
       database: dbName,
-    });
+      entities: entities,
+    } as DataSourceOptions);
   }
 
   async createDB(dbName: string): Promise<boolean> {
-    const tempDataSource = await this.connectionDB('mysql');
+    const tempDataSource = this.createDataSource('mysql');
 
     await tempDataSource.initialize();
     const queryRunner = tempDataSource.createQueryRunner();
@@ -41,7 +45,7 @@ export class DatabaseService {
   }
 
   async dropDB(dbName: string): Promise<boolean> {
-    const tempDataSource = await this.connectionDB('mysql');
+    const tempDataSource = this.createDataSource('mysql');
 
     await tempDataSource.initialize();
     const queryRunner = tempDataSource.createQueryRunner();
@@ -61,7 +65,7 @@ export class DatabaseService {
   }
 
   async checkIfDBExists(dbName: string): Promise<boolean> {
-    const tempDataSource = await this.connectionDB('mysql');
+    const tempDataSource = this.createDataSource('mysql');
 
     await tempDataSource.initialize();
     const queryRunner = tempDataSource.createQueryRunner();
@@ -77,5 +81,15 @@ export class DatabaseService {
       await queryRunner.release();
       await tempDataSource.destroy();
     }
+  }
+
+  async getDataSource(dbName: string): Promise<DataSource> {
+    if (this.dataSources.has(dbName)) {
+      return this.dataSources.get(dbName);
+    }
+    const dataSource = this.createDataSource(dbName, [User, Company]);
+    await dataSource.initialize();
+    this.dataSources.set(dbName, dataSource);
+    return dataSource;
   }
 }
