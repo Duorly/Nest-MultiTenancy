@@ -21,6 +21,7 @@ export class DatabaseService {
       password: this.configService.get('MYSQL_PASSWORD'),
       database: dbName,
       entities: entities,
+      synchronize: true, // Automatically synchronize the schema
     } as DataSourceOptions);
   }
 
@@ -34,6 +35,12 @@ export class DatabaseService {
     try {
       await queryRunner.query(`CREATE DATABASE ${dbName}`);
       this.logger.log(`Database ${dbName} created successfully`);
+
+      // Initialize the new database and synchronize entities
+      const newDataSource = this.createDataSource(dbName, [User, Company]);
+      await newDataSource.initialize();
+      this.dataSources.set(dbName, newDataSource);
+      this.logger.log(`Entities synchronized for database ${dbName}`);
       return true;
     } catch (error) {
       this.logger.log(`Failed to create database ${dbName}`, error);
