@@ -23,13 +23,13 @@ export class User extends TimestampEntity {
   username?: string;
 
   @Index({ unique: true })
-  @Column()
-  phone: string;
+  @Column({ nullable: true })
+  phone?: string;
 
   @Index({ unique: true })
   @Column({ nullable: true })
   @IsEmail()
-  email: string;
+  email?: string;
 
   @Column({ nullable: true })
   lastOtp?: string;

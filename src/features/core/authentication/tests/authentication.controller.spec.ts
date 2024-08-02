@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthenticationController } from './authentication.controller';
+import { AuthenticationController } from '../controllers/authentication.controller';
 import { AuthenticationService } from '../services/authentication.service';
 
 describe('AuthenticationController', () => {

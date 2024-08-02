@@ -20,7 +20,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         signOptions: { expiresIn: '1d' },
       }),
     }),
-    PassportModule
+    PassportModule,
   ],
   controllers: [AuthenticationController],
   providers: [AuthenticationService, UsersService, JwtStrategy],

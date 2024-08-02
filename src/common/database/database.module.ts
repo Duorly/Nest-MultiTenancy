@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseService } from './database.service';
+import { User } from '../../features/users/entities/user.entity';
+import { Company } from '../../features/core/companies/entities/company.entity';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { DatabaseService } from './database.service';
         username: configService.getOrThrow('MYSQL_USER'),
         password: configService.getOrThrow('MYSQL_PASSWORD'),
         synchronize: configService.getOrThrow('MYSQL_SYNCHRONIZE'),
-        autoLoadEntities: true,
+        entities: [User, Company],
         subscribers: [],
       }),
     }),
